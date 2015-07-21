@@ -22,7 +22,7 @@ def get_student_by_github(github):
     row = db_cursor.fetchone()
     print "Student: %s %s\nGithub account: %s" % (
         row[0], row[1], row[2])
-    command = None
+
 
 
 def make_new_student(first_name, last_name, github):
@@ -38,7 +38,6 @@ def make_new_student(first_name, last_name, github):
     db_cursor.execute(QUERY, (first_name, last_name, github,))
     db_connection.commit()
     print "Successfully added student: %s %s" % (first_name, last_name)
-    command = None
 
 
 def get_project_by_title(title):
@@ -50,16 +49,32 @@ def get_project_by_title(title):
 
     db_cursor.execute(QUERY, (title,))
     row = db_cursor.fetchone()
-    print "Here is the project information:", row
+    print "Here is the project information:", row[0]
+
 
 def get_grade_by_github_title(github, title):
     """Print grade student received for a project."""
-    pass
+    QUERY = """
+        SELECT grade 
+        FROM Grades 
+        WHERE student_github = ?
+        AND project_title = ? """
+    db_cursor.execute(QUERY, (github, title,))
+    row = db_cursor.fetchone()
+    print "student received", row[0], "for %s" %(title)
 
 
 def assign_grade(github, title, grade):
     """Assign a student a grade on an assignment and print a confirmation."""
-    pass
+
+    QUERY = """
+        INSERT INTO Grades (student_github, project_title, grade)
+        VALUES (?, ?, ?)
+        """
+    db_cursor.execute(QUERY, (github, title, grade,))
+    db_connection.commit()
+    print "Student has received a", grade, "on", title
+    
 
 
 def handle_input():
@@ -88,6 +103,12 @@ def handle_input():
             title = args[0]
             get_project_by_title(title)
 
+        elif command == "get_project_title":
+            github, title = args
+            get_grade_by_github_title(github, title)
+        elif command == "get_grade": 
+            github, title, grade = args
+            assign_grade(github, title, grade)
 
 
 
