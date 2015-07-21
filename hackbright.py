@@ -22,6 +22,7 @@ def get_student_by_github(github):
     row = db_cursor.fetchone()
     print "Student: %s %s\nGithub account: %s" % (
         row[0], row[1], row[2])
+    command = None
 
 
 def make_new_student(first_name, last_name, github):
@@ -35,17 +36,17 @@ def make_new_student(first_name, last_name, github):
         VALUES (?, ?, ?) 
       """
     db_cursor.execute(QUERY, (first_name, last_name, github,))
-    row = db_cursor.fetchone()
     db_connection.commit()
     print "Successfully added student: %s %s" % (first_name, last_name)
+    command = None
 
 
 def get_project_by_title(title):
     """Given a project title, print information about the project."""
     QUERY = """
-        SELECT *
-        FROM projects
-        WHERE project_title = ? """
+        SELECT description 
+        FROM Projects
+        WHERE title = ? """
 
     db_cursor.execute(QUERY, (title,))
     row = db_cursor.fetchone()
@@ -82,6 +83,12 @@ def handle_input():
         elif command == "new_student":
             first_name, last_name, github = args   # unpack!
             make_new_student(first_name, last_name, github)
+
+        elif command == "get_project_info":
+            title = args[0]
+            get_project_by_title(title)
+
+
 
 
 if __name__ == "__main__":
