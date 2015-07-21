@@ -75,7 +75,19 @@ def assign_grade(github, title, grade):
     db_connection.commit()
     print "Student has received a", grade, "on", title
     
+def add_a_project(title, max_grade, description): 
+#     Add a command that lets you add project, including the project title, 
+# description, and maximum grade.
 
+# Note: Project descriptions can be one word or several words. 
+# How could you write this to handle both cases?
+    QUERY = """
+        INSERT INTO Projects (title, max_grade, description)
+        VALUES (?, ?, ?)
+    """
+    db_cursor.execute(QUERY, (title, max_grade, description, ))
+    db_connection.commit()
+    print "New project title: %s" % (title) 
 
 def handle_input():
     """Main loop.
@@ -106,10 +118,16 @@ def handle_input():
         elif command == "get_project_title":
             github, title = args
             get_grade_by_github_title(github, title)
-        elif command == "get_grade": 
+
+        elif command == "give_grade": 
             github, title, grade = args
             assign_grade(github, title, grade)
 
+        elif command == "add_project": 
+            title = args[0]
+            max_grade = int(args[1])
+            description = ' '.join(args[2:])
+            add_a_project(title, max_grade, description)
 
 
 if __name__ == "__main__":
