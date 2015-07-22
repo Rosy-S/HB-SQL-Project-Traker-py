@@ -89,6 +89,27 @@ def add_a_project(title, max_grade, description):
     db_connection.commit()
     print "New project title: %s" % (title) 
 
+def get_grades(github): 
+# Add a command that lets you see all the grades for a student, 
+# showing the grade received and the project title. This should print out one line per title/grade.
+
+# To do this, you may need to consult the sqlite3 Python module documentation.   
+    QUERY = """
+        SELECT title, grade
+        FROM Grades
+        JOIN Projects On Grades.project_title = Projects.title 
+        WHERE student_github = ?
+
+    """ 
+    db_cursor.execute(QUERY, (github, ))
+    results = db_cursor.fetchall()
+    print "Project tile and grade for github:", github
+    for result in results: 
+        print result[0], result[1]
+    
+
+    
+    
 def handle_input():
     """Main loop.
 
@@ -128,6 +149,10 @@ def handle_input():
             max_grade = int(args[1])
             description = ' '.join(args[2:])
             add_a_project(title, max_grade, description)
+
+        elif command == "get_grade": 
+            github = args[0]
+            get_grades(github)
 
 
 if __name__ == "__main__":
